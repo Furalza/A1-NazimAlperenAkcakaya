@@ -61,19 +61,57 @@ def run_all_models():
     scaler_y = StandardScaler()
     y_train_scaled = scaler_y.fit_transform(y_train.reshape(-1, 1)).ravel()
 
-    # ----- MLR baseline -----
+    # ===== 1) MLR BASELINE =====
     mlr = LinearRegression()
     mlr.fit(X_train, y_train_scaled)
 
-    y_pred_scaled = mlr.predict(X_test)
-    y_pred = scaler_y.inverse_transform(
-        y_pred_scaled.reshape(-1, 1)
+    y_pred_mlr_scaled = mlr.predict(X_test)
+    y_pred_mlr = scaler_y.inverse_transform(
+        y_pred_mlr_scaled.reshape(-1, 1)
     ).ravel()
 
-    mse, mae, mape = regression_metrics(y_test, y_pred)
-
+    mse_mlr, mae_mlr, mape_mlr = regression_metrics(y_test, y_pred_mlr)
     print("=== MLR-F (baseline) ===")
-    print(f"MSE: {mse:.3f}  MAE: {mae:.3f}  MAPE: {mape:.2f}%")
+    print(f"MSE: {mse_mlr:.3f}  MAE: {mae_mlr:.3f}  MAPE: {mape_mlr:.2f}%")
+
+    # ===== 2) BP (our implementation) =====
+    input_dim = X_train.shape[1]
+    bp_configs = [
+        {"layers": [input_dim, 16, 1],
+         "epochs": 200, "lr": 0.01, "mom": 0.0, "act": "tanh", "val": 0.2},
+        {"layers": [input_dim, 32, 16, 1],
+         "epochs": 300, "lr": 0.01, "mom": 0.5, "act": "tanh", "val": 0.2},
+        {"layers": [input_dim, 64, 32, 1],
+         "epochs": 400, "lr": 0.005, "mom": 0.7, "act": "tanh", "val": 0.2},
+        {"layers": [input_dim, 32, 1],
+         "epochs": 150, "lr": 0.02, "mom": 0.3, "act": "relu", "val": 0.2},
+    ]
+
+    bp_results = []
+    for cfg in bp_configs:
+        nn = NeuralNet(
+            layers=cfg["layers"],
+            n_epochs=cfg["epochs"],
+            learning_rate=cfg["lr"],
+            momentum=cfg["mom"],
+            activation=cfg["act"],
+            val_ratio=cfg["val"],
+            random_state=RANDOM_STATE,
+        )
+        nn.fit(X_train, y_train_scaled)
+        y_pred_bp_scaled = nn.predict(X_test)
+        y_pred_bp = scaler_y.inverse_transform(
+            y_pred_bp_scaled.reshape(-1, 1)
+        ).ravel()
+
+        mse, mae, mape = regression_metrics(y_test, y_pred_bp)
+        cfg_result = cfg.copy()
+        cfg_result.update({"mse": mse, "mae": mae, "mape": mape})
+        bp_results.append(cfg_result)
+
+    df_bp = pd.DataFrame(bp_results)
+    print("\n=== BP (our implementation) – configs ===")
+    print(df_bp)
 
 
 if __name__ == "__main__":
