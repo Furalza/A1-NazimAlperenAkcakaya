@@ -5,6 +5,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.linear_model import LinearRegression
+from sklearn.neural_network import MLPRegressor
+from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 
 from NeuralNet import NeuralNet
 
@@ -112,6 +114,51 @@ def run_all_models():
     df_bp = pd.DataFrame(bp_results)
     print("\n=== BP (our implementation) – configs ===")
     print(df_bp)
+
+    # ===== 3) BP-F (MLPRegressor) =====
+    mlp = MLPRegressor(
+        hidden_layer_sizes=(64, 32),
+        activation="tanh",
+        learning_rate_init=0.01,
+        max_iter=500,
+        random_state=RANDOM_STATE,
+    )
+    mlp.fit(X_train, y_train_scaled)
+    y_pred_mlp_scaled = mlp.predict(X_test)
+    y_pred_mlp = scaler_y.inverse_transform(
+        y_pred_mlp_scaled.reshape(-1, 1)
+    ).ravel()
+
+    mse_mlp, mae_mlp, mape_mlp = regression_metrics(y_test, y_pred_mlp)
+    print("\n=== BP-F (MLPRegressor) ===")
+    print(f"MSE: {mse_mlp:.3f}  MAE: {mae_mlp:.3f}  MAPE: {mape_mlp:.2f}%")
+
+    # ===== 4) ENSEMBLES =====
+    rf = RandomForestRegressor(
+        n_estimators=300,
+        max_depth=None,
+        random_state=RANDOM_STATE,
+        n_jobs=-1,
+    )
+    rf.fit(X_train, y_train)
+    y_pred_rf = rf.predict(X_test)
+    mse_rf, mae_rf, mape_rf = regression_metrics(y_test, y_pred_rf)
+
+    gbr = GradientBoostingRegressor(
+        n_estimators=300,
+        learning_rate=0.05,
+        max_depth=3,
+        random_state=RANDOM_STATE,
+    )
+    gbr.fit(X_train, y_train)
+    y_pred_gbr = gbr.predict(X_test)
+    mse_gbr, mae_gbr, mape_gbr = regression_metrics(y_test, y_pred_gbr)
+
+    print("\n=== Ensembles (optional) ===")
+    print("Random Forest   -> MSE: %.3f  MAE: %.3f  MAPE: %.2f%%"
+          % (mse_rf, mae_rf, mape_rf))
+    print("Gradient Boost. -> MSE: %.3f  MAE: %.3f  MAPE: %.2f%%"
+          % (mse_gbr, mae_gbr, mape_gbr))
 
 
 if __name__ == "__main__":
