@@ -1,148 +1,123 @@
-Activity 1 – Prediction with Supervised Learning Models
+# Activity 1 – Prediction with Supervised Learning Models  
+**Nazim Alperen Akcakaya**  
+Master’s Programme – Neural And Evolutionary Computation 
+Universitat Rovira i Virgili (URV), 2025
 
-Nazim Alperen Akcakaya
+---
 
-Neural and Evolutionary Computing – URV (2025)
-📌 Overview
+## 📘 Overview
 
-This project implements and evaluates several supervised learning models on the Bike Sharing Dataset (UCI).
-The goal is to compare prediction performance and analyse the impact of model design choices such as:
+This project evaluates several supervised learning models on the **Bike Sharing Dataset** (UCI).  
+The objective is to predict the **daily count of rented bicycles** using environmental, seasonal, and temporal features, and to study how different learning strategies affect predictive performance.
 
-Neural network architecture
+The assignment includes:
 
-Learning rate and momentum
+- A **custom feed-forward neural network** implemented from scratch (Back-Propagation + Momentum)  
+- A scikit-learn neural model (**MLPRegressor / BP-F**)  
+- A baseline **Multiple Linear Regression (MLR-F)** model  
+- **Ensemble methods** (Random Forest and Gradient Boosting)  
+- **Regularisation experiments** (L2 penalty, early stopping)  
+- **5-fold Cross-Validation** using the custom BP network  
 
-Activation functions
+All experiments use the same preprocessing pipeline to ensure comparable results.
 
-Regularisation (L2, early stopping)
+---
 
-Cross-validation
+## 📁 Repository Structure
 
-Ensemble learning
-
-The work includes both custom-built models and scikit-learn models.
-
-📁 Repository Structure
 A1-NazimAlperenAkcakaya/
 │
 ├── data/
-│   ├── day.csv               # Main Bike Sharing dataset (daily)
-│   └── hour.csv              # Not used in this assignment
+│ ├── day.csv # Dataset used for the assignment (731 samples)
+│ └── hour.csv # Larger dataset (not used in this report)
 │
-├── NeuralNet.py              # Custom neural network with backpropagation
-├── data_and_models.py        # Main experiment runner (MLR, BP, BP-F, ensembles, regularisation)
-├── cv_experiments.py         # 5-fold CV for BP model
+├── NeuralNet.py # Custom neural network implementation (from scratch)
+├── data_and_models.py # Main experiment runner
+├── cv_experiments.py # 5-fold CV for the custom BP model
 │
-└── README.md                 # Project documentation
+└── README.md # Documentation
 
-🚀 How to Run the Project
-Install dependencies:
+
+---
+
+## ⚙️ How to Run the Experiments
+
+### Install dependencies:
+
+```bash
 pip install numpy pandas scikit-learn
 
-Run all experiments (baseline + BP + BP-F + ensembles + regularisation):
+Run all models (MLR-F, BP, BP-F, Ensembles, Regularisation):
 python data_and_models.py
 
-Run 5-fold cross-validation for the custom BP network:
+Run the 5-fold cross-validation experiment:
 python cv_experiments.py
 
-📊 Key Results
-1️⃣ MLR-F (baseline)
-
+📊 Results Summary
+1️⃣ MLR-F Baseline
 MSE: 634,351
-
 MAE: 583.02
-
 MAPE: 133.70%
 
 2️⃣ Custom Back-Propagation (BP)
-
-Several network configurations were tested.
-
-Example results:
-
-MSE between 709k–2.7M
-
-MAE between 673–1235
-
-MAPE between 105%–195%
-
-The model is sensitive to hyperparameters and less stable than BP-F.
+Several architectures were tested:
+MSE: 709k – 2.7M
+MAE: 673 – 1235
+MAPE: 105% – 196%
+The model is highly sensitive to hyperparameters and exhibits instability due to online updates.
 
 3️⃣ BP-F (MLPRegressor)
-
 MSE: 567,813
-
 MAE: 548.63
-
 MAPE: 103.88%
 
-Much more stable due to built-in regularisation and better optimisation.
+This model clearly improves upon the manual BP version thanks to better optimisation and built-in regularisation.
 
-4️⃣ Ensemble Models
-Model	MSE	MAE	MAPE
-Random Forest	462,389	439.14	144.96%
-Gradient Boosting	425,420	449.40	121.22%
+4️⃣ Ensemble Models (Optional Part 3)
+Model	             MSE	    MAE	     MAPE
+Random Forest	     462,389	439.14	 144.96%
+Gradient Boosting	 425,420	449.40	 121.22%
+➡ Gradient Boosting achieves the best predictive accuracy overall.
 
-Gradient Boosting achieved the best MSE overall.
-
-5️⃣ Regularisation Experiments (BP-F)
-
-Tested L2 (alpha) and Early Stopping.
-
+5️⃣ Regularisation Experiments (Optional Part 1)
 Best configuration:
-
-alpha = 0.01, early stopping = True
-
+alpha = 0.01
+early_stopping = True
+Results:
 MSE: 383,494
-
 MAE: 446.63
-
 MAPE: 95.21%
+Regularisation notably improves generalisation.
 
-Regularisation significantly improved BP-F stability and accuracy.
-
-6️⃣ 5-Fold Cross-Validation (BP)
-MSE : 847,175 ± 121,613
-MAE : 722.46 ± 34.50
+6️⃣ 5-Fold Cross-Validation (Optional Part 2)
+Using the custom BP model:
+MSE: 847,175 ± 121,613
+MAE: 722.46 ± 34.50
 MAPE: 42.36% ± 30.89%
+Fold variability reveals the instability of the online BP learning rule.
 
+🧠 Key Insights
+BP-F (MLPRegressor) reliably outperforms the manual BP implementation.
+Gradient Boosting provides the lowest MSE among all models.
+Regularisation (L2 + early stopping) is essential for stable neural network learning.
+The custom BP algorithm works correctly, but its performance is highly dependent on learning rate, momentum, and architecture.
+Ensemble models effectively capture nonlinear seasonal effects in the dataset.
 
-Variation is high → model is sensitive to different partitions.
-
-🧠 Summary of Insights
-
-BP-F (MLPRegressor) outperforms manual BP thanks to built-in optimisation.
-
-Gradient Boosting achieves the best overall prediction accuracy.
-
-Regularisation (L2 + early stopping) is essential for neural network stability.
-
-CV reveals strong variance in the BP model due to dataset complexity.
-
-Custom BP implementation behaves correctly but is not as robust as library models.
-
-📚 Dataset Source
-
-Bike Sharing Dataset
-UCI Machine Learning Repository
+📚 Dataset Reference
+Bike Sharing Dataset (UCI Machine Learning Repository):
 https://archive.ics.uci.edu/ml/datasets/Bike+Sharing+Dataset
 
-✔ Final Notes
+✔️ Final Notes
+This repository was developed following a clear, incremental workflow:
+Dataset preprocessing
+Baseline regression
+Custom BP implementation
+BP-F model
+Ensemble learners
+Regularisation studies
+Cross-validation
+All modules are independent, making the experimentation process clean and reproducible.
 
-This repository follows a natural development workflow with multiple incremental commits:
+Author: Nazim Alperen Akcakaya
+Neural And Evolutionary Computation – URV (2025)
 
-dataset loading
-
-baseline model
-
-custom BP
-
-sklearn models
-
-ensembles
-
-regularisation
-
-cross-validation
-
-Everything is modular so experiments can be repeated easily.
