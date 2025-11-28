@@ -44,7 +44,7 @@ A1-NazimAlperenAkcakaya/
 
 ### Install dependencies:
 
-```bash
+
 pip install numpy pandas scikit-learn matplotlib
 
 Run all supervised models:
@@ -77,8 +77,6 @@ But suffers from vanishing gradients and online SGD instability
 Underestimates high-demand hours (visible in scatter plot)
 
 BP-F (MLPRegressor)
-makefile
-Copy code
 MSE: 2,289.85  
 MAE: 31.29  
 MAPE: 45.64%
