@@ -54,7 +54,7 @@ def regression_metrics(y_true, y_pred):
 #                   DATA LOADING & CLEANING
 # ============================================================
 
-def load_bike_data(path="data/day.csv"):
+def load_bike_data(path="data/hour.csv"):
     """
     Load the Bike Sharing Dataset and remove columns that leak the target or
     behave as identifiers.
